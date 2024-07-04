@@ -24,7 +24,7 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
 
 4. Select which devices hwill be exported.
 
-    <font size="1">  
+    <font size="10">  
     Hello World 
 </font>  
 
