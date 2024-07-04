@@ -31,7 +31,7 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
 
 
 Resources:
-<span style="font-size:0.5em;">
+<span style="font-size:8pt;">
  - https://www.unifix.org/2023/11/28/usbip-on-debian-12-usb-device-sharing-over-ip-network/
  - https://www.unifix.org/2023/11/28/usbip-on-debian-12-usb-device-sharing-over-ip-network/
  - https://www.unifix.org/2023/11/28/automating-usbip-server/
