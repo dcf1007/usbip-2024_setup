@@ -22,20 +22,19 @@ Now you can list all the possible devices by running `usbip list -l` followed by
 
 But what we want to do though is binding the devices in a plug'n'play fashon and execute the daemon in a persistent manner. This can be by either whitelisting the device IDs to be exposed, or blacklisting the device IDs that should not be exposed.
 
-4. Select which devices will be exported.
+4. Select which devices hwill be exported.
 
-    
+    <font size="1">  
+    Hello World 
+</font>  
 
 
 
 
 
 Resources:
-<span style="font-size:8pt;">
- - https://www.unifix.org/2023/11/28/usbip-on-debian-12-usb-device-sharing-over-ip-network/
  - https://www.unifix.org/2023/11/28/usbip-on-debian-12-usb-device-sharing-over-ip-network/
  - https://www.unifix.org/2023/11/28/automating-usbip-server/
  - https://wiki.archlinux.org/title/USB/IP
  - https://www.linux-magazine.com/Issues/2018/208/Tutorial-USB-IP
  - https://github.com/psct/usbip
-</span>
