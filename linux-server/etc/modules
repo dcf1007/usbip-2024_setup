@@ -1,0 +1,3 @@
+# Modules needed for usbip to work
+usbip_core
+usbip_host
