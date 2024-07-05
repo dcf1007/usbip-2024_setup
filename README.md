@@ -12,7 +12,7 @@ Code modifications and set-up instructions to run usbip server on Debian12-based
     usbip_core
     usbip_host
     ```
-3. Reload modules
+3. Reload the modules
     ```console
     sudo systemctl restart systemd-modules-load.service
     ```
@@ -22,11 +22,38 @@ Now you can list all the possible devices by running `usbip list -l` followed by
 
 But what we want to do though is binding the devices in a plug'n'play fashon and execute the daemon in a persistent manner. This can be by either whitelisting the device IDs to be exposed, or blacklisting the device IDs that should not be exposed.
 
-4. Select which devices will be exported.
+4. Create a new service for usbipd at `/etc/systemd/system/usbipd.service`:
+    ```
+    [Unit]
+    Description=USB over IP daemon service
+    After=network-online.target
+    Wants=network-online.target
 
+    [Service]
+    # Type forking because it daemonizes
+    Type=forking
 
+    # If the process is killed, exited or terminated, restart it
+    Restart=always
 
+    # Start usbpipd as a daemon
+    ExecStart=/usr/sbin/usbipd -D
 
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+5. Create an Event Handler for plugging a USB device at ``:
+
+10. Reload and enable the usbipd.service
+
+    ```
+    sudo systemctl --system daemon-reload
+
+    sudo systemctl enable usbipd.service
+
+    sudo systemctl restart usbipd.service
+    ```
 
 
 Resources:

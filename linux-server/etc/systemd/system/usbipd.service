@@ -1,0 +1,17 @@
+[Unit]
+Description=USB over IP daemon service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Type forking because it daemonizes
+Type=forking
+
+# If the process is killed, exited or terminated, restart it
+Restart=always
+
+# Start usbpipd as a daemon
+ExecStart=/usr/sbin/usbipd -D
+
+[Install]
+WantedBy=multi-user.target
