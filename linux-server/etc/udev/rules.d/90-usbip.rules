@@ -1,6 +1,12 @@
 # Check if the event is triggered by a USB. If not skip the execution
 SUBSYSTEM!="usb", GOTO="usbip_exit"
 
+# Terminate the export if device is removed. SYSTEMD_WANTS does not handle remove, so we use systemctl
+# We try to stop the pseudo-service for all disconnected USB devices. As it is a pseudo-service and
+# usbip@.service exists, there are no complains from systemctl.
+# We end the execution of the code by GOTO to the end of the file
+ACTION=="remove", ENV{DEVTYPE}=="usb_device", RUN+="/usr/bin/systemctl --no-block stop usbip@%k.service", GOTO="usbip_exit"
+
 # ---------------------------- START DEVICE FILTERING MODE BLOCK ---------------------------- #
 
 # ¡¡¡ATTENTION!!!: ONLY ONE OF THE MODES SHOULD BE UNCOMMENTED!
@@ -26,6 +32,8 @@ SUBSYSTEM!="usb", GOTO="usbip_exit"
 
 # Brother Industries, Ltd PT-P700 P-touch Label Printer
 ATTR{idVendor}=="04f9", ATTR{idProduct}=="2061", GOTO="usbip_bind"
+# Alternative line compatible with remove
+#ENV{PRODUCT}=="4f9/2061*", GOTO="usbip_bind"
 
 # Skip all other USB devices
 GOTO="usbip_exit"
@@ -34,7 +42,7 @@ GOTO="usbip_exit"
 
 # Trigger the export (IP binding) event for the USB device
 LABEL="usbip_bind"
-ACTION=="add|remove", ENV{DEVTYPE}=="usb_device", TAG+="usbip", TAG+="systemd", ENV{SYSTEMD_WANTS}+="usbip@%k.service"
+ACTION=="add", ENV{DEVTYPE}=="usb_device", TAG+="usbip", TAG+="systemd", ENV{SYSTEMD_WANTS}+="usbip@%k.service"
 
 #End of the execution blocks
 LABEL="usbip_exit"
