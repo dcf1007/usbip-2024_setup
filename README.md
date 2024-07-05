@@ -94,19 +94,20 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     After=network-online.target usbipd.service
     Wants=network-online.target usbipd.service
     PartOf=usbipd.service
-    StopWhenUnneeded=yes
 
     [Service]
     Type=simple
     RemainAfterExit=yes
 
-    # Export device by bind 
+    StandardOutput=journal
+
+    # Export device by bind
     ExecStart=/usr/sbin/usbip bind -b %i
 
     # Stop export
     ExecStop=-/usr/sbin/usbip unbind -b %i
     # In case that the device had been previously removed
-    ExecStop=/bin/systemctl reset-failed
+    #ExecStop=/bin/systemctl reset-failed
 
     [Install]
     WantedBy=multi-user.target

@@ -3,7 +3,6 @@ Description=USB over IP export for port %i; called by device specific udev rule
 After=network-online.target usbipd.service
 Wants=network-online.target usbipd.service
 PartOf=usbipd.service
-StopWhenUnneeded=yes
 
 [Service]
 Type=simple
