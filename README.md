@@ -112,10 +112,9 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     WantedBy=multi-user.target
     ```
 
+7. Reload daemons, enable and restart usbipd.service
 
-10. Reload and enable the usbipd.service
-
-    ```
+    ```console
     sudo systemctl --system daemon-reload
 
     sudo systemctl enable usbipd.service
@@ -123,6 +122,12 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     sudo systemctl restart usbipd.service
     ```
 
+8. Reload and trigger udev events for any existing USB devices
+    ```console
+    udevadm control --reload-rules
+    
+    sudo udevadm trigger
+    ```
 
 Resources:
  - https://www.unifix.org/2023/11/28/usbip-on-debian-12-usb-device-sharing-over-ip-network/
