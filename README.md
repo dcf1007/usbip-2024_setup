@@ -88,7 +88,29 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     ```
 
 6. Create a pseudo-service for the USB devices triggered by the event handler at `/etc/systemd/system/usbip@.service`:
+    ```
+    [Unit]
+    Description=USB over IP export for port %i; called by device specific udev rule
+    After=network-online.target usbipd.service
+    Wants=network-online.target usbipd.service
+    PartOf=usbipd.service
+    StopWhenUnneeded=yes
 
+    [Service]
+    Type=simple
+    RemainAfterExit=yes
+
+    # Export device by bind 
+    ExecStart=/usr/sbin/usbip bind -b %i
+
+    # Stop export
+    ExecStop=-/usr/sbin/usbip unbind -b %i
+    # In case that the device had been previously removed
+    ExecStop=/bin/systemctl reset-failed
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
 
 
 10. Reload and enable the usbipd.service

@@ -1,1 +1,21 @@
+[Unit]
+Description=USB over IP export for port %i; called by device specific udev rule
+After=network-online.target usbipd.service
+Wants=network-online.target usbipd.service
+PartOf=usbipd.service
+StopWhenUnneeded=yes
 
+[Service]
+Type=simple
+RemainAfterExit=yes
+
+# Export device by bind 
+ExecStart=/usr/sbin/usbip bind -b %i
+
+# Stop export
+ExecStop=-/usr/sbin/usbip unbind -b %i
+# In case that the device had been previously removed
+ExecStop=/bin/systemctl reset-failed
+
+[Install]
+WantedBy=multi-user.target
