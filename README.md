@@ -44,6 +44,23 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     ```
 
 5. Create an Event Handler for plugging a USB device at ``:
+    ```
+    # Test if the usb device is blacklisted for binding
+    SUBSYSTEM=="hidraw", SUBSYSTEMS=="usb", ATTRS{idVendor}=="04f2", ATTRS{idProduct}=="0618", GOTO="match"
+    # If not, skip the next 3 rules. The test against SUBSYSTEM=="hidraw" is there to produce a rule match
+    SUBSYSTEM=="hidraw", GOTO="end"
+    LABEL="match"
+    # Those 3 rules actually assign the right symlink depending on the bInterfaceProtocol property.
+    # Note that ALL of those rules contain the SUBSYSTEM=="hidraw" check, because the GOTO in the second line
+    # does not get executed for non-hidraw devices and the rules get evaluated for any non-hidraw device.
+    SUBSYSTEM=="hidraw", SUBSYSTEMS=="usb", ATTRS{bInterfaceProtocol}=="01", SYMLINK="mdremote0", MODE="0666"
+    SUBSYSTEM=="hidraw", SUBSYSTEMS=="usb", ATTRS{bInterfaceProtocol}=="00", SYMLINK="mdremote1", MODE="0666"
+    SUBSYSTEM=="hidraw", SUBSYSTEMS=="usb", ATTRS{bInterfaceProtocol}=="02", SYMLINK="mdremote2", MODE="0666"
+    LABEL="end"
+    ```
+
+
+
 
 10. Reload and enable the usbipd.service
 
@@ -62,3 +79,4 @@ Resources:
  - https://wiki.archlinux.org/title/USB/IP
  - https://www.linux-magazine.com/Issues/2018/208/Tutorial-USB-IP
  - https://github.com/psct/usbip
+ - https://github.com/alpertsev/usbip-service-shell
