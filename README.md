@@ -43,8 +43,7 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     WantedBy=multi-user.target
     ```
 
-5. Create an Event Handler for detecting plugged USB devices at `/etc/udev/rules.d
-/90-usbip.rules`:
+5. Create an Event Handler for detecting plugged USB devices at `/etc/udev/rules.d/90-usbip.rules`:
     ```
     # Check if the event is triggered by a USB. If not skip the execution
     SUBSYSTEM!="usb", GOTO="usbip_exit"
