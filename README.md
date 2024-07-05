@@ -99,15 +99,13 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     Type=simple
     RemainAfterExit=yes
 
-    StandardOutput=journal
-
     # Export device by bind
     ExecStart=/usr/sbin/usbip bind -b %i
 
     # Stop export
     ExecStop=-/usr/sbin/usbip unbind -b %i
     # In case that the device had been previously removed
-    #ExecStop=/bin/systemctl reset-failed
+    ExecStop=/bin/systemctl reset-failed
 
     [Install]
     WantedBy=multi-user.target
