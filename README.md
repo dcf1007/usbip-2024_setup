@@ -144,20 +144,13 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
 
 
 
-ACTION=="remove", ENV{DEVTYPE}=="usb_device", RUN+="/bin/sh -c 'echo remove %k %s{idVendor} %s{idProduct} %E{PRODUCT}>> /home/david/device.txt'"
-ACTION=="add", ENV{DEVTYPE}=="usb_device", RUN+="/bin/sh -c 'echo add %k %s{idVendor} %s{idProduct} %E{PRODUCT}>> /home/david/device.txt'"
-
-
-
-
-
-
 Resources:
+ - https://github.com/psct/usbip
+ - https://github.com/alpertsev/usbip-service-shell
+ - https://github.com/nikdom/usbip
+ - https://attie.co.uk/wiki/linux/usbip/
+ - https://bugzilla.redhat.com/show_bug.cgi?id=871074
  - https://www.unifix.org/2023/11/28/usbip-on-debian-12-usb-device-sharing-over-ip-network/
  - https://www.unifix.org/2023/11/28/automating-usbip-server/
  - https://wiki.archlinux.org/title/USB/IP
  - https://www.linux-magazine.com/Issues/2018/208/Tutorial-USB-IP
- - https://github.com/psct/usbip
- - https://github.com/alpertsev/usbip-service-shell
- - https://attie.co.uk/wiki/linux/usbip/
- - https://bugzilla.redhat.com/show_bug.cgi?id=871074
