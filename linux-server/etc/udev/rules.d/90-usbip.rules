@@ -32,8 +32,6 @@ ACTION=="remove", ENV{DEVTYPE}=="usb_device", RUN+="/usr/bin/systemctl --no-bloc
 
 # Brother Industries, Ltd PT-P700 P-touch Label Printer
 ATTR{idVendor}=="04f9", ATTR{idProduct}=="2061", GOTO="usbip_bind"
-# Alternative line compatible with remove
-#ENV{PRODUCT}=="4f9/2061*", GOTO="usbip_bind"
 
 # Skip all other USB devices
 GOTO="usbip_exit"
