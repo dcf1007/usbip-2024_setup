@@ -85,9 +85,9 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
 
     #End of the execution blocks
     LABEL="usbip_exit"
-
     ```
 
+6. Create a pseudo-service for the USB devices triggered by the event handler at `/etc/systemd/system/usbip@.service`:
 
 
 
