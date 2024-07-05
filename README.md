@@ -43,20 +43,50 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     WantedBy=multi-user.target
     ```
 
-5. Create an Event Handler for plugging a USB device at ``:
+5. Create an Event Handler for detecting plugged USB devices at `/etc/udev/rules.d
+/90-usbip.rules`:
     ```
-    # Test if the usb device is blacklisted for binding
-    SUBSYSTEM=="hidraw", SUBSYSTEMS=="usb", ATTRS{idVendor}=="04f2", ATTRS{idProduct}=="0618", GOTO="match"
-    # If not, skip the next 3 rules. The test against SUBSYSTEM=="hidraw" is there to produce a rule match
-    SUBSYSTEM=="hidraw", GOTO="end"
-    LABEL="match"
-    # Those 3 rules actually assign the right symlink depending on the bInterfaceProtocol property.
-    # Note that ALL of those rules contain the SUBSYSTEM=="hidraw" check, because the GOTO in the second line
-    # does not get executed for non-hidraw devices and the rules get evaluated for any non-hidraw device.
-    SUBSYSTEM=="hidraw", SUBSYSTEMS=="usb", ATTRS{bInterfaceProtocol}=="01", SYMLINK="mdremote0", MODE="0666"
-    SUBSYSTEM=="hidraw", SUBSYSTEMS=="usb", ATTRS{bInterfaceProtocol}=="00", SYMLINK="mdremote1", MODE="0666"
-    SUBSYSTEM=="hidraw", SUBSYSTEMS=="usb", ATTRS{bInterfaceProtocol}=="02", SYMLINK="mdremote2", MODE="0666"
-    LABEL="end"
+    # Check if the event is triggered by a USB. If not skip the execution
+    SUBSYSTEM!="usb", GOTO="usbip_exit"
+
+    # ---------------------------- START DEVICE FILTERING MODE BLOCK ---------------------------- #
+    
+    # ¡¡¡ATTENTION!!!: ONLY ONE OF THE MODES SHOULD BE UNCOMMENTED!
+    
+    ##########################################
+    #     Skip the following USB devices     #
+    ##########################################
+    #
+    # Rpi integrated peripherials. Modify accordingly to your host hardware
+    # SMSC9512/9514 Fast Ethernet Adapter
+    #ATTR{idVendor}=="0424", ATTR{idProduct}=="ec00", GOTO="usbip_exit"
+    #
+    # Linux Foundation 2.0 root hub
+    #ATTR{idVendor}=="1d6b", ATTR{idProduct}=="0002", GOTO="usbip_exit"
+    #
+    # Other USB devices to exclude:
+    # Logitech, Inc. Nano Receiver
+    #ATTR{idVendor}=="046d", ATTR{idProduct}=="c534", GOTO="usbip_exit"
+
+    ##########################################
+    # Include ONLY the following USB devices #
+    ##########################################
+    
+    # Brother Industries, Ltd PT-P700 P-touch Label Printer
+    ATTR{idVendor}=="04f9", ATTR{idProduct}=="2061", GOTO="usbip_bind"
+    
+    # Skip all other USB devices
+    GOTO="usbip_exit"
+
+    # ----------------------------- END DEVICE FILTERING MODE BLOCK ----------------------------- #
+
+    # Trigger the export (IP binding) event for the USB device
+    LABEL="usbip_bind"
+    ACTION=="add|remove", ENV{DEVTYPE}=="usb_device", TAG+="usbip", TAG+="systemd", ENV{SYSTEMD_WANTS}+="usbip@%k.service"
+
+    #End of the execution blocks
+    LABEL="usbip_exit"
+
     ```
 
 
