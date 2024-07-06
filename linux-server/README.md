@@ -23,7 +23,7 @@ Now you can list all the possible devices by running `usbip list -l` followed by
 But what we want to do though is binding the devices in a plug'n'play fashon and execute the daemon in a persistent manner. This can be by either whitelisting the device IDs to be exposed, or blacklisting the device IDs that should not be exposed.
 
 4. Create a new service for usbipd at `/etc/systemd/system/usbipd.service`:
-    ```SYSTEMD
+    ```desktop
     [Unit]
     Description=USB over IP daemon service
     After=network-online.target
