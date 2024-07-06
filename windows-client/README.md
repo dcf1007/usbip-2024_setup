@@ -77,20 +77,32 @@ Set-ExecutionPolicy Unrestricted
 1. Create a script to generate attaching and detaching mechanisms to a specific device in `C:\usbip\install_device.ps1`
 
 ```powershell
+# Set the variable that will contain the list of devices available 
 $devices = $null
+# Keep asking for a valid server if $devices comes back empty
 while ($devices -eq $null)
 {
+    # User input for the name or IP for the connection to the server
     $server_addr = Read-Host -Prompt "Please type the IP or the name of the server"
+    # Request using usbip the list of available devices to attach
+    # Run a RegEx pattern to recognize the BusID, VendorID and DeviceID and add the
+    # matches to the list $devices.
     $devices = (./usbip list -r $server_addr | select-string -Pattern ".*([0-9]+-[0-9]+\.{0,1}[0-9]*).*\(([0-9a-zA-Z]{0,4}):([0-9a-zA-Z]{0,4})\)").Matches
 }
 echo "Devices available to attach:"
-$n=0
+# Define the index counter to enumerate the list entries
+$n=0 
+# Loop through all the list entries and print them prefixed with their index
 $devices | ForEach-Object -Process {echo "  ($n) $($_.Groups[0].Value)"; $n++}
+# Define the variable that will contain the index of the selected device
 $device_nr = -1
+# Keep asking for a valid device index. That should be a valid int between 0 and $n-1
 while ($device_nr -lt 0 -or $device_nr -ge $n)
 {
+    # User input for the index of the device
     [int]$device_nr = Read-Host -Prompt "Please select the number of the device to attach"
 }
+
 echo "Selected device: $devices[$device_nr].Groups[0].Value"
 echo "Creating attachment script for VEN_$($devices[$device_nr].Groups[2].Value)&DEV_$($devices[$device_nr].Groups[3].Value)"
 echo "As long as this device is available in the server, even if it changes port, the scripts will work"
