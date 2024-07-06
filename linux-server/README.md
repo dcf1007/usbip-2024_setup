@@ -44,7 +44,7 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     ```
 
 5. Create an Event Handler for detecting plugged USB devices at `/etc/udev/rules.d/90-usbip.rules`:
-    ```YAML
+    ```
     # Check if the event is triggered by a USB. If not skip the execution
     SUBSYSTEM!="usb", GOTO="usbip_exit"
 
@@ -101,7 +101,7 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     In this case, then, it would be possible to move the remove line down and stop the service selectively too (this scenario won't be compatible with blacklisting though)
 
 6. Create a pseudo-service for the USB devices triggered by the event handler at `/etc/systemd/system/usbip@.service`:
-    ```
+    ```desktop
     [Unit]
     Description=USB over IP export for port %i; called by device specific udev rule
     After=network-online.target usbipd.service
