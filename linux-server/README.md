@@ -1,28 +1,48 @@
 # usbip-2024_setup
-## Server-side (Linux -debian based-)
-Code modifications and set-up instructions to run usbip server on Debian12-based systems and the client in windows-based and linux-based systems
+## Server-side (Linux)
+Code and set-up instructions to run usbip server on Linux. Tested on Raspbian bookworm (Debian 12.5).
 
 1. Install the USB over IP package:
-
     ```console
     sudo apt install usbip
     ```
+### Manual testing
+2. Load the required modules:
+    ```console
+    modprobe -a usbip_core usbip_host
+    ```
+    We can check that the modules loaded properly by running `lsmod`
+
+3. List all devices that could be exported:
+    ```console
+    usbip list -l
+    ```
+
+4. Export the desired device:
+    ```console
+    usbip bind --busid=bus_id
+    ```
+
+    where bus_id has to be replaced by its kernel ID shown by `usbip list -l`.
+
+5. Start the daemon:
+    ```console
+    usbipd
+    ```
+
+### Automating the daemon and making it Plug'n'Play
+
+What we want to do is exporting the devices in a plug'n'play fashon and execute the daemon in a persistent manner. This can be by either whitelisting the device IDs to be exposed, or blacklisting the device IDs that should not be exposed.
+
+**TL;DR: The files described below can be downloaded directly and used if you don't want to read through all the text. Simply paste the files in your /etc/\* folder, add the desired USB device(s) to _`/etc/udev/rules.d/90-usbip.rules`_ and reboot**
+
 2. Add the required modules to `/etc/modules`
     ```console
     usbip_core
     usbip_host
     ```
-3. Reload the modules
-    ```console
-    sudo systemctl restart systemd-modules-load.service
-    ```
-    We can check that the modules loaded properly by running `lsmod`
-
-Now you can list all the possible devices by running `usbip list -l` followed by `usbip bind --busid=bus_id` where bus_id has to be replaced by its kernel ID shown in the list. Finally we could start the daemon by running `usbipd`
-
-But what we want to do though is binding the devices in a plug'n'play fashon and execute the daemon in a persistent manner. This can be by either whitelisting the device IDs to be exposed, or blacklisting the device IDs that should not be exposed.
-
-4. Create a new service for usbipd at `/etc/systemd/system/usbipd.service`:
+    
+3. Create a new service for usbipd at `/etc/systemd/system/usbipd.service`:
     ```desktop
     [Unit]
     Description=USB over IP daemon service
@@ -43,7 +63,7 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     WantedBy=multi-user.target
     ```
 
-5. Create an Event Handler for detecting plugged USB devices at `/etc/udev/rules.d/90-usbip.rules`:
+4. Create an Event Handler for detecting plugged USB devices at `/etc/udev/rules.d/90-usbip.rules`:
     ```
     # Check if the event is triggered by a USB. If not skip the execution
     SUBSYSTEM!="usb", GOTO="usbip_exit"
@@ -94,13 +114,15 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     ```
     The variable `%k` contains the kernel name for the USB device.
     When using `ATTR{idVendor}` and `ATTR{idProduct}` the line will not be triggered with `ACTION="remove"` as there are no attributes from a removed device.
+    
     It is possible to make such line that will react to removed devices by using `ENV{PRODUCT}` which contains idVendor/idProduct/flags together with a simple regEx VVVV/PPPP* (ommiting any leading 0s) in the following way:
     ```
     ENV{PRODUCT}=="4f9/2061*", GOTO="usbip_bind"
     ```
+
     In this case, then, it would be possible to move the remove line down and stop the service selectively too (this scenario won't be compatible with blacklisting though)
 
-6. Create a pseudo-service for the USB devices triggered by the event handler at `/etc/systemd/system/usbip@.service`:
+5. Create a pseudo-service for the USB devices triggered by the event handler at `/etc/systemd/system/usbip@.service`:
     ```desktop
     [Unit]
     Description=USB over IP export for port %i; called by device specific udev rule
@@ -123,7 +145,13 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     [Install]
     WantedBy=multi-user.target
     ```
+
     The variable `%i` contains the kernel name for the USB device
+
+3. Reload the modules
+    ```console
+    sudo systemctl restart systemd-modules-load.service
+    ```
 
 7. Reload daemons, enable and restart usbipd.service
 
