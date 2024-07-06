@@ -67,7 +67,14 @@ Code and set-up instructions to run usbip client on Windows. Tested on Windows 1
 
 ### Automating the procedure
 
-1. Create a script to generate attaching and detaching mechanisms to a specific device
+The idea is that once the device is selected, with a simple click you can attach or detach the device to the computer in a trouble-free way.
+
+You may need to run as Admin in PowerShell the following command to allow the execution of scripts:
+```powershell
+Set-ExecutionPolicy Unrestricted
+```
+
+1. Create a script to generate attaching and detaching mechanisms to a specific device in `C:\usbip\install_device.ps1`
 
 ```powershell
 $devices = $null
