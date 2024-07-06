@@ -87,7 +87,7 @@ while ($devices -eq $null)
     # Request using usbip the list of available devices to attach
     # Run a RegEx pattern to recognize the BusID, VendorID and DeviceID and add the
     # matches to the list $devices.
-    $devices = (./usbip list -r $server_addr | select-string -Pattern ".*([0-9]+-[0-9]+\.{0,1}[0-9]*).*\(([0-9a-zA-Z]{0,4}):([0-9a-zA-Z]{0,4})\)").Matches
+    $devices = (./usbip list -r $server_addr | Select-String -Pattern ".*([0-9]+-[0-9]+\.{0,1}[0-9]*).*\(([0-9a-zA-Z]{0,4}):([0-9a-zA-Z]{0,4})\)").Matches
 }
 echo "Devices available to attach:"
 # Define the index counter to enumerate the list entries
@@ -102,8 +102,13 @@ while ($device_nr -lt 0 -or $device_nr -ge $n)
     # User input for the index of the device
     [int]$device_nr = Read-Host -Prompt "Please select the number of the device to attach"
 }
-
-echo "Selected device: $devices[$device_nr].Groups[0].Value"
+# Print the information about the selected device
+echo "Selected device: $($devices[$device_nr].Groups[0].Value)"
+$script_name = Read-Host -Prompt "Select a name for the attach/detach scripts [VEN_$($devices[$device_nr].Groups[2].Value)&DEV_$($devices[$device_nr].Groups[3].Value)]
+if ($script_name -eq "")
+{
+    $script_name = VEN_$($devices[$device_nr].Groups[2].Value)&DEV_$($devices[$device_nr].Groups[3].Value)
+}
 echo "Creating attachment script for VEN_$($devices[$device_nr].Groups[2].Value)&DEV_$($devices[$device_nr].Groups[3].Value)"
 echo "As long as this device is available in the server, even if it changes port, the scripts will work"
 echo "Searching for the BusID of the device"
