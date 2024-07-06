@@ -44,7 +44,7 @@ But what we want to do though is binding the devices in a plug'n'play fashon and
     ```
 
 5. Create an Event Handler for detecting plugged USB devices at `/etc/udev/rules.d/90-usbip.rules`:
-    ```
+    ```XML Property List
     # Check if the event is triggered by a USB. If not skip the execution
     SUBSYSTEM!="usb", GOTO="usbip_exit"
 
